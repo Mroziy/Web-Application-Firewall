@@ -1,0 +1,32 @@
+import re
+
+# Define a list of blocked keywords
+BLOCKED_KEYWORDS = ['sql', 'injection', 'hack', 'attack']
+
+# Define a regular expression pattern to match SQL injection attempts
+SQL_INJECTION_PATTERN = re.compile(r'select.*from|insert.*into|update.*set|delete.*from|drop.*table|create.*table', re.IGNORECASE)
+
+# Define a function to check if a request should be blocked
+def is_blocked(request):
+    # Check if the request contains any blocked keywords
+    for keyword in BLOCKED_KEYWORDS:
+        if keyword in request:
+            return True
+    # Check if the request contains a SQL injection attempt
+    if SQL_INJECTION_PATTERN.search(request):
+        return True
+    # If the request doesn't match any of the above criteria, allow it
+    return False
+
+# Define a function to handle incoming requests
+def handle_request(request):
+    if is_blocked(request):
+        return 'Error: Your request was blocked'
+    else:
+        return 'Success: Your request was allowed'
+
+# Test the web application firewall with some sample requests
+print(handle_request('SELECT * FROM users'))
+print(handle_request('INSERT INTO users VALUES (1, "John Doe")'))
+print(handle_request('DROP TABLE users'))
+print(handle_request('This is a harmless request'))
